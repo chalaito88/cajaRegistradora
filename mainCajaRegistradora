@@ -1,0 +1,316 @@
+import java.time.LocalDateTime;
+import java.util.*;
+
+public class mainCajaRegistradora {
+
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        int op, op2, password = 6666;
+        String[] listaProductos={"Plátanos", "Cerezas", "Tomates", "Cebolla", "Melón", "Sandia", "Calabaza", "Naranja", "Mandarina", "Alcachofas"};
+        float[] listaPrecios= {1.34F,3.4F,5,3.65F,1.56F,6.78F,4.51F,1.88F,3.45F,5.43F};
+        int[] cantidadProducto={10,20,5,0,6,8,5,45,8,34};
+
+
+        do {
+
+            System.out.println("""
+		                    
+		                    Bienvenidos a su mercado de confianza.
+		                    
+		                    ------MERKAK-----
+		                    
+		                    1- Compras.
+		                    2- Gestión de productos.
+		                    0- Salir.
+		                    
+		                    -----------------
+		                    
+		                    Introduce una acción:
+		                    
+		                    """);
+
+            op = sc.nextInt();
+
+            switch (op) {
+                case 1:
+                    int[] carritoCompraProduc = {0},carritoCompraCant = {0};
+                    compra(listaProductos, listaPrecios,cantidadProducto,carritoCompraProduc,carritoCompraCant);
+                    break;
+                case 2:
+                    System.out.println("Introduce la contraseña: ");
+                    int contraintro = sc.nextInt();
+
+                    if (password == contraintro) {
+                        do {
+                            System.out.println("""
+		                            
+		                            Elige una opción:
+		                            
+		                            1- Dar de alta un producto.
+		                            2- Dar baja a un producto.
+		                            3- Consulta un producto.
+		                            4- Modificar un producto.
+		                            0- Salir
+		                            
+		                            """);
+                            System.out.println("Introduce una opción: ");
+                            op2 = sc.nextInt();
+
+                            switch (op2) {
+                                case 1:
+                                    //Añadimos nuevo hueco para el nuevo producto fuera de la función, porque dentro solo es temporal.
+                                    listaProductos = Arrays.copyOf(listaProductos, listaProductos.length+1);
+                                    listaProductos[listaProductos.length-1] = String.valueOf(0);
+                                    cantidadProducto = Arrays.copyOf(cantidadProducto, cantidadProducto.length+1);
+                                    cantidadProducto[cantidadProducto.length-1] = 0;
+                                    listaPrecios = Arrays.copyOf(listaPrecios, listaPrecios.length+1);
+                                    listaPrecios[listaPrecios.length-1] = 0;
+
+                                    //Llamamos función
+                                    anadirLista(listaProductos, cantidadProducto, listaPrecios);
+                                    break;
+                                case 2:
+                                    quitarProducto(listaProductos, listaPrecios, cantidadProducto);
+                                    //Lo mismo que cuando añades un producto, necesitamos tenerlo aquí para que nos quite la última posición
+                                    listaProductos = Arrays.copyOf(listaProductos, listaProductos.length-1);
+                                    break;
+                                case 3:
+                                    consultaProducto (listaProductos, listaPrecios, cantidadProducto);
+                                    break;
+                                case 4:
+                                    modificaProducto (listaProductos,listaPrecios,cantidadProducto);
+                                    break;
+
+                                case 0:
+                                    System.out.println("Saliendo del menú");
+                                    enterContinuar();
+                                    break;
+                                default:
+                                    System.out.println("Introduce una opción válida (1 ,2 ,3 ,4 ,0");
+                                    enterContinuar();
+                            }
+                        } while (op2!=0);
+
+                    } else {
+                        System.out.println("Contraseña incorrecta");
+                        enterContinuar();
+                    }
+
+                    break;
+
+                case 0:
+                    System.out.println("Gracias por su visita \uD83C\uDF0D");
+                    break;
+
+                default:
+                    System.out.println("Introduce una opción válida");
+            }
+        }while (op!=0);
+
+    }
+    static void enterContinuar () {
+        Scanner scan = new Scanner(System.in);
+        System.out.println();
+        System.out.println("Presiona ENTER para continuar...");
+        scan.nextLine();
+    }
+    //Función para dar de alta un producto
+    static void anadirLista(String[] listaProductos,int[] cantidadProducto,float[] listaPrecios){
+        Scanner sc = new Scanner(System.in);
+        boolean sino=false;
+
+        System.out.println(Arrays.toString(listaProductos));
+
+
+        System.out.println("¿Qué producto desea añadir? ");
+        String productoNuevo=sc.nextLine();
+        for (int i =0; i<listaProductos.length; i++){
+            if (productoNuevo.equalsIgnoreCase(listaProductos[i])){//comprobar si el producto ya está introducido
+                System.out.println("Producto no válido, ya está dentro de la lista");
+                sino = true;
+            }
+        }
+        if (sino!=true) {
+            System.out.println("¿Qué precio va a tener? ");
+            float precioNuevo=sc.nextFloat();
+            System.out.println("¿Cuánta cantidad de producto hay? ");
+            int cantidadNueva=sc.nextInt();
+
+            listaProductos[listaProductos.length-1]=productoNuevo;
+            listaPrecios[listaPrecios.length-1]=precioNuevo;
+            cantidadProducto[cantidadProducto.length-1]=cantidadNueva;
+
+            System.out.println("Se ha sumado con éxito el producto, esta es la lista actualizada: ");
+
+        }
+        System.out.println(Arrays.toString(listaProductos));
+        System.out.println(Arrays.toString(listaPrecios));
+        System.out.println(Arrays.toString(cantidadProducto));
+
+        enterContinuar();
+    }
+
+    //Función para quitar un producto
+    static void quitarProducto(String[] listaProductos, float[] listaPrecios, int[] cantidadProducto){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("¿Qué producto desea eliminar? ");
+        for(int i=0;i< listaProductos.length;i++){
+            System.out.println("Pulse " + (i+1) + " " + listaProductos[i]);
+        }
+        int productoEliminado = sc.nextInt();
+        productoEliminado -=1;
+
+        //Eliminación de listaProductos
+        System.arraycopy(listaProductos, productoEliminado+1,
+                listaProductos, productoEliminado, listaProductos.length-productoEliminado-1);
+        //Eliminación de listaPrecios
+        System.arraycopy(listaPrecios, productoEliminado+1,
+                listaPrecios, productoEliminado, listaPrecios.length-productoEliminado-1);
+        //Eliminación de cantidadProducto
+        System.arraycopy(cantidadProducto, productoEliminado+1,
+                cantidadProducto, productoEliminado, cantidadProducto.length-productoEliminado-1);
+
+        System.out.println("Eliminando producto... ");
+        enterContinuar();
+    }
+
+    //Función para consultar el producto
+    static void consultaProducto (String[] listaProductos, float[] listaPrecios, int[] cantidadProducto){
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("¿Qué producto quiere consultar? ");
+        for (int i = 0; i < listaProductos.length; i++) {
+            System.out.println("Pulse " + (i+1) + " " + listaProductos[i]);
+        }
+        int consultaProducto = sc.nextInt();
+
+        System.out.println(listaProductos[consultaProducto-1]);
+        System.out.println(cantidadProducto[consultaProducto-1]);
+        System.out.println(listaPrecios[consultaProducto-1]);
+        enterContinuar();
+    }
+
+    //Función para modificar producto
+    static void modificaProducto (String[] listaProductos, float[] listaPrecios, int[] cantidadProducto){
+        Scanner sc = new Scanner(System.in);
+
+        for (int i = 0; i < listaProductos.length; i++) {
+            System.out.println("Pulse " + (i+1) + " " + listaProductos[i]);
+        }
+        System.out.println("¿Qué producto quiere modificar? ");
+        int modificaProducto = sc.nextInt();
+        int cantidadAnterior= cantidadProducto[modificaProducto-1];
+
+        System.out.println("¿Qué nombre quiere ponerle? ");
+        listaProductos[modificaProducto-1] = sc.next();
+        System.out.println("¿Qué precio quiere ponerle? ");
+        listaPrecios[modificaProducto-1] = sc.nextFloat();
+        System.out.println("¿Qué cantidad de producto quiere poner? ");
+        cantidadProducto[modificaProducto-1] = sc.nextInt();
+        cantidadProducto[modificaProducto-1]+=cantidadAnterior; //Hacemos esto para que se sume a la cantidad de producto que había anteriormente y simplemente no lo cambie por lo introducido
+
+        System.out.println("El producto fue modificado con éxito.");
+        enterContinuar();
+        System.out.println("El resultado de la modificación es: ");
+        // Muestra de productos del mercado
+        for (int i = 0; i < listaProductos.length; i++) {
+            System.out.print((i+1) + " " + listaProductos[i] + " | ");
+            System.out.print(" " + "Tenemos: " + cantidadProducto[i] + " | ");
+            System.out.println(" " + "El precio es: " + listaPrecios[i] + "€");
+            System.out.println();
+        }
+        enterContinuar();
+
+
+    }
+    //función para comprar
+    static void compra (String[] listaProductos, float[] listaPrecios, int[] cantidadProducto, int[] carritoCompraProduc,int[] carritoCompraCant) {
+        Scanner sc = new Scanner(System.in);
+        int op, productselect = 0, productoCant, contcarrito = 0;
+
+        do {
+            // Muestra de productos del mercado
+            for (int i = 0; i < listaProductos.length; i++) {
+                System.out.print("Pulse " + (i+1) + " " + listaProductos[i] + " | ");
+                System.out.print(" " + "Tenemos: " + cantidadProducto[i] + " | ");
+                System.out.println(" " + "El precio es: " + listaPrecios[i] + "€");
+                System.out.println();
+            }
+
+            System.out.println("""
+		                        1- Compra
+		                        2- Dejar de comprar.
+		                        """);
+            System.out.println("Introduzca opción: ");
+            op = sc.nextInt();
+
+            if (op == 1) {
+
+                System.out.println("Elija producto: ");
+                productselect = sc.nextInt();
+                System.out.println("¿Qué cantidad quiere? ");
+                productoCant = sc.nextInt();
+
+                if (productoCant > cantidadProducto[productselect - 1]) {
+                    System.out.println("La cantidad elegida sobrepasa el stock.");
+                    System.out.println("En stock tenemos: " + cantidadProducto[productselect - 1]);
+                    System.out.println("Seleccione de nuevo el producto ");
+                    enterContinuar();
+                } else {
+                    carritoCompraCant[contcarrito] = productoCant;
+                    carritoCompraProduc[contcarrito] = productselect - 1;
+                    contcarrito++;
+                    // Ajuste de cantidades del total
+                    cantidadProducto[productselect - 1] -= productoCant;
+                    System.out.println("Hemos añadido su producto al carrito.");
+                    //Aumento de array de carrito
+                    carritoCompraProduc = Arrays.copyOf(carritoCompraProduc, carritoCompraProduc.length+1);
+                    carritoCompraProduc[carritoCompraProduc.length-1] = 0;
+                    carritoCompraCant = Arrays.copyOf(carritoCompraCant, carritoCompraCant.length+1);
+                    carritoCompraCant[carritoCompraCant.length-1] = 0;
+
+                    enterContinuar();
+                }
+            } else if (op == 2 ){
+                System.out.println("Saliendo de la compra...");
+                enterContinuar();
+            } else {
+                System.out.println("Introduzca una opción valida. (1,2)");
+                enterContinuar();
+            }
+
+        }while (op!=2);
+
+        // Muestra el carrito seleccionado
+        int totalProduct=0;
+        float totalPrecio = 0.00f;
+
+        System.out.println();
+        System.out.println();
+        System.out.println("\u001B[36mEste es su ticket de la compra: \u001B[0m");
+        System.out.println();
+        System.out.println("\u001B[32mUsted ha seleccionado estos productos: ");
+        System.out.println();
+        for(int i=0;i<carritoCompraProduc.length-1;i++){
+            System.out.println("--> "+listaProductos[carritoCompraProduc[i]] + " Cantidad: " + carritoCompraCant[i] + " con un precio de: " + listaPrecios[carritoCompraProduc[i]] + " € "+" la unidad");
+        }
+        for(int i=0;i<carritoCompraProduc.length - 1;i++){
+            //Operaciones matemáticas de ticket
+            totalProduct += carritoCompraCant[i];
+            totalPrecio += (listaPrecios[productselect - 1]*carritoCompraCant[i]);
+        }
+        //ticket
+        System.out.println(".....................................................................");
+        System.out.println(" La cantidad total de artículos de su carrito es: " + totalProduct);
+        System.out.println(" El precio es: " + totalPrecio + " € " + " SIN IVA");
+        System.out.printf(" El Total a pagar son: " + ((totalPrecio*0.21) + totalPrecio) + " € "+" IVA incluido ");
+        System.out.println(".....................................................................");
+        System.out.println(LocalDateTime.now());
+        System.out.println(" Viste nuestra web en www.merkak.com\u001B[0m");
+        enterContinuar();
+
+    }
+}
